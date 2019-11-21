@@ -1,26 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
 
-const mysql = require('mysql'); 
 
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Makkaraperunat1",
-    database: "db"
-    });
-
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("Tapahtumat is connected");
-    });
 
 
 
 // GET all tapahtumat from the DB
 router.get('/', (req, res, next) => {
     let sql = "SELECT * from TAPAHTUMAT;";
-    con.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
@@ -34,7 +23,7 @@ router.get('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
     var id = req.params.id;
     let sql = 'SELECT * from tapahtumat WHERE tapahtuma_id =' + id;
-    con.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
@@ -57,7 +46,7 @@ router.post('/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta', (r
         hinta: req.params.hinta
         };
     let sql = 'INSERT INTO tapahtumat(start_time, end_time, missa, mika, linkki ,kuva, teksti ,hinta) VALUES("'+tapahtuma.startTime+'","'+tapahtuma.endTime+'","'+tapahtuma.missa+'","'+tapahtuma.mika+'","'+tapahtuma.linkki+'","'+tapahtuma.kuva+'","'+tapahtuma.teksti+'","'+tapahtuma.hinta+'");';
-        con.query(sql, (err, result) => {
+        db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
          res.status(201).json({
@@ -71,7 +60,7 @@ router.post('/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta', (r
 router.delete('/:id', (req, res, next) => {
     var id = req.params.id;
     let sql = 'DELETE from tapahtumat WHERE tapahtuma_id =' + id;
-    con.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(201).json({
@@ -95,7 +84,7 @@ router.put('/:id/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta',
         hinta: req.params.hinta
         };
     let sql = 'UPDATE tapahtumat SET start_time = "'+tapahtuma.startTime+'", end_time = "'+tapahtuma.endTime+'", missa ="'+tapahtuma.missa+'", mika= "'+tapahtuma.mika+'", linkki = "'+tapahtuma.linkki+'", kuva = "'+tapahtuma.kuva+'", teksti = "'+tapahtuma.teksti+'", hinta = "'+tapahtuma.hinta+'" WHERE tapahtuma_id ='+tapahtuma.id+';';
-        con.query(sql, (err, result) => {
+        db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
          res.status(201).json({

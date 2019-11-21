@@ -1,26 +1,12 @@
 const express = require('express');
 const routes = express.Router();
-
-const mysql = require('mysql'); 
-
-var con = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Makkaraperunat1",
-    database: "db"
-    });
-
-con.connect(function(err) {
-    if (err) throw err;
-    console.log("Fanituotteet is connected");
-    });
-
+const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
 
 
 // GET all fanituotteet from the DB
 routes.get('/', (req, res, next) => {
     let sql = "SELECT * from FANITUOTTEET;";
-    con.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
@@ -34,7 +20,8 @@ routes.get('/', (req, res, next) => {
 routes.get('/:id', (req, res, next) => {
     var id = req.params.id;
     let sql = 'SELECT * from FANITUOTTEET WHERE fanituote_id =' + id;
-    con.query(sql, (err, result) => {
+    
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
@@ -54,7 +41,7 @@ routes.post('/:fanituotekategoria_id/:hinta/:kuva/:info/:nimi', (req, res, next)
         nimi: req.params.nimi
         };
     let sql = 'INSERT INTO FANITUOTTEET (fanituotekategoria_id, hinta, kuva, info, nimi) VALUES('+fanituote.fanituotekategoria_id+','+fanituote.hinta+',"'+fanituote.kuva+'","'+fanituote.info+'","'+fanituote.nimi+'");';
-        con.query(sql, (err, result) => {
+        db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
          res.status(201).json({
@@ -68,7 +55,7 @@ routes.post('/:fanituotekategoria_id/:hinta/:kuva/:info/:nimi', (req, res, next)
 routes.delete('/:id', (req, res, next) => {
     var id = req.params.id;
     let sql = 'DELETE from FANITUOTTEET WHERE fanituote_id =' + id;
-    con.query(sql, (err, result) => {
+    db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(201).json({
@@ -89,7 +76,7 @@ routes.put('/:id/:fanituotekategoria_id/:hinta/:kuva/:info/:nimi', (req, res, ne
         nimi: req.params.nimi
         };
     let sql = 'UPDATE FANITUOTTEET SET fanituotekategoria_id = '+fanituote.fanituotekategoria_id+', hinta = '+fanituote.hinta+', kuva ="'+fanituote.kuva+'", info ="'+fanituote.info+'", nimi ="'+fanituote.nimi+'" WHERE fanituote_id ='+fanituote.id+';';
-        con.query(sql, (err, result) => {
+        db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
          res.status(201).json({

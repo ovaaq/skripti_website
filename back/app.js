@@ -1,9 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
-
+const mysql = require('mysql'); 
 const app = express();
     
+
 
 
 app.use(function(req, res, next) {
@@ -18,6 +19,7 @@ const routesTapahtumat = require('./api/routes/tapahtumat');
 const routesJasenrekisteri = require('./api/routes/jasenrekisteri');
 const routesFanituotteet = require('./api/routes/fanituotteet');
 const routesTuutorit = require('./api/routes/tuutorit');
+const routesAdmin= require('./api/routes/admin');
 
 
 app.use(morgan('dev'));
@@ -29,15 +31,16 @@ app.use('/tapahtumat', routesTapahtumat);
 app.use('/jasenrekisteri', routesJasenrekisteri);
 app.use('/fanituotteet', routesFanituotteet);
 app.use('/tuutorit', routesTuutorit);
+app.use('/admin', routesAdmin);
 
 
-
+/*
 app.use((req, res, next) => {
     const error = new Error('Not found');
     error.status(404);
     next(error);
 });
 
-
+*/
 
 module.exports = app;
