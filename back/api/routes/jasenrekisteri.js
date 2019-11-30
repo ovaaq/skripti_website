@@ -1,37 +1,129 @@
 const express = require('express');
 const routes = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
+const jwt= require("jsonwebtoken");
+var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
 
 
 // GET all jasenet from the DB
-routes.get('/', (req, res, next) => {
-    let sql = "SELECT * from JASENREKISTERI;";
+routes.get('/',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
+            let sql = "SELECT * from JASENREKISTERI;";
+            db.query(sql, (err, result) => {
+                if(err) throw err;
+                console.log(result);
+                res.status(200).json({
+                    message: 'JASENREKISTERI was fetched',
+                    list: result,
+                    authData
+                });
+           });        
+        }
+      });    
+
+});
+
+
+//maksaneet on false
+routes.get('/',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
+    let sql = "SELECT * from JASENREKISTERI WHERE maksu = 0;";
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
-            message: 'JASENREKISTERI was fetched',
-            list: result
+            message: 'JASENREKISTERI was fetched with maksaneet = false',
+            list: result,
+            authData
         });
-   });
+   });        
+}
+});    
+
 });
 
+
+//maksaneet on true ja liittymispäivää ei ole
+routes.get('/',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
+    let sql = "SELECT * from JASENREKISTERI WHERE maksu = 1 AND WHERE hyvaksytty = NULL;";
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.status(200).json({
+            message: 'JASENREKISTERI was fetched with maksaneet true and hyväksytty is null',
+            list: result,
+            authData
+        });
+   });        
+}
+});    
+
+});
+
+
+//kaikki, joissa liittymispäivä !=null ja eroaminen =null
+routes.get('/',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
+    let sql = "SELECT * from JASENREKISTERI WHERE hyvaksytty IS NOT NULL AND  eronnut IS NULL;";
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.status(200).json({
+            message: 'JASENREKISTERI was fetched with hyväksytty ei ole null ja eronnut ei ole null',
+            list: result,
+            authData
+        });
+   });        
+}
+});    
+
+});
+
+
+
+
 // GET one jasen with matching if drom DB
-routes.get('/:id', (req, res, next) => {
+routes.get('/:id',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
     var id = req.params.id;
     let sql = 'SELECT * from JASENREKISTERI WHERE jasen_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
-            message: 'Jasen was searched',
-            user: result
+            message: 'JASENREKISTERI with id',
+            list: result,
+            authData
         });
-   });
+   });        
+}
+});    
+
 });
 
 // POST one jasen with JSON and ADD to the DB
-routes.post('/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:aloitusvuosi/:hyvaksytty/:eronnut/:tiedotus', (req, res, next) => {
+routes.post('/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:aloitusvuosi/:hyvaksytty/:eronnut/:tiedotus',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
+    
     const jasen = {
         firstName: req.params.firstName,
         lastName: req.params.lastName,
@@ -48,28 +140,44 @@ routes.post('/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:aloit
         db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
-         res.status(201).json({
-            message: 'Jasen was created',
-            object: jasen    
+         res.status(200).json({
+            message: 'JASENREKISTERI was updated with one jasen',
+            object: jasen,
+            authData
         });
-    });
+   });        
+}
+});    
+
 });
 
 // DELETE one jasen with matching id and clear in DB
-routes.delete('/:id', (req, res, next) => {
+routes.delete('/:id',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
     var id = req.params.id;
     let sql = 'DELETE from JASENREKISTERI WHERE jasen_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.status(201).json({
-            message: 'Jasen was deleted'
+        res.status(200).json({
+            message: 'JASENREKISTERI was deleted with one jasen',
+            authData
         });
-    });
+   });        
+}
+});    
+
 });
 
 // PUT new info on jasen with JSON and change in the DB
-routes.put('/:id/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:aloitusvuosi/:hyvaksytty/:eronnut/:tiedotus', (req, res, next) => {
+routes.put('/:id/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:aloitusvuosi/:hyvaksytty/:eronnut/:tiedotus',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
     
     const jasen = {
         id: req.params.id,
@@ -88,12 +196,17 @@ routes.put('/:id/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:al
         db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
-         res.status(201).json({
-            message: 'User was updated',
-            object: jasen    
+         res.status(200).json({
+            message: 'JASENREKISTERI was updated',
+            object: jasen,
+            authData
         });
-    });
+   });        
+}
+});    
+
 });
+
 
 
 module.exports = routes;

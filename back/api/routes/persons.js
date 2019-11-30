@@ -1,7 +1,7 @@
 const express = require('express');
 const routes = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
-
+var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
 // GET all person from the DB
 routes.get('/', (req, res, next) => {
     let sql = "SELECT * from PERSONS;";
@@ -16,10 +16,34 @@ routes.get('/', (req, res, next) => {
    });
 });
 
-// GET one person with matching if drom DB
+
+// GET hallituslaiset with current year
+routes.get('/current', (req, res, next) => {
+    let sql = "SELECT hallitus_id FROM HALLITUKSET WHERE start_time = YEAR(CURRENT_TIMESTAMP);";
+    
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        let sql2 ="SELECT persons.person_id, persons.firstname,persons.linkedIn, persons.facebook, persons.instagram,persons.telegram,persons.snapchat, persons.picture,persons.info FROM PERSONS INNER JOIN IHMISETHALLITUKSISSA ON persons.person_id = ihmisethallituksissa.person_id WHERE hallitus_id ="+JSON.stringify(result[0].hallitus_id)+";"
+        db.query(sql2, (err, result2) => {
+            if(err) throw err;
+            console.log(result2);
+            
+            res.status(200).json({
+                message: 'Current hallituslaiset were fetched current',
+                list: result2
+            });
+        });
+   });
+});
+
+
+
+
+ //GET one person with matching if drom DB
 routes.get('/:id', (req, res, next) => {
     var id = req.params.id;
-    let sql = 'SELECT * from PERSONS WHERE person_id =' + id;
+    let sql = 'SELECT  * from PERSONS WHERE person_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
@@ -30,8 +54,15 @@ routes.get('/:id', (req, res, next) => {
    });
 });
 
+
+
+
 // POST one person with JSON and ADD to the DB
-routes.post('/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:snapchat/:picture/:info', (req, res, next) => {
+routes.post('/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:snapchat/:picture/:info',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
     const user = {
         firstName: req.params.firstName,
         lastName: req.params.lastName,
@@ -47,28 +78,44 @@ routes.post('/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:sna
         db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
-         res.status(201).json({
-            message: 'Person was created',
-            object: user    
+         res.status(200).json({
+            message: 'PERSON WAS ADDED',
+            object:user,
+            authData
         });
-    });
+   });        
+}
+});    
+
 });
 
 // DELETE one person with matching id and clear in DB
-routes.delete('/:id', (req, res, next) => {
+routes.delete('/:id',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
     var id = req.params.id;
     let sql = 'DELETE from persons WHERE person_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.status(201).json({
-            message: 'Person was deleted'
+        res.status(200).json({
+            message: 'PERSON was deleted',
+            authData
         });
-    });
-});
+   });        
+}
+});    
 
+});
 // PUT new info on person with JSON and change in the DB
-routes.put('/:id/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:snapchat/:picture/:info', (req, res, next) => {
+routes.put('/:id/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:snapchat/:picture/:info',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403);
+        } else {
+    
    
     const user = {
         id: req.params.id,
@@ -86,11 +133,15 @@ routes.put('/:id/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:
         db.query(sql, (err, result) => {
          if(err) throw err;
          console.log(result);
-         res.status(201).json({
-            message: 'Person was updated',
-            object: user    
+         res.status(200).json({
+            message: 'PERSON was updated',
+            object:user,
+            authData
         });
-    });
+   });        
+}
+});    
+
 });
 
 

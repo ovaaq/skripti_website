@@ -1,93 +1,44 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const routes = express.Router();
-const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
+const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js');
+const bcrypt = require('bcrypt');
 
 
 
-routes.get("/login", (req, res, next) => {
-    const login = {
+
+routes.post("/login", (req, res2, next) => {
+    const user = {
         tunnus: req.body.tunnus,
         salasana: req.body.salasana
       
         };
-    let sql = 'SELECT * FROM ADMINS WHERE tunnus =' + login.tunnus +'AND WHERE salasana ='+login.salasana+');';
-    console.log(login.tunnus);
+    let sql = 'SELECT salasana  FROM ADMINS WHERE tunnus = "' + user.tunnus +'";';
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.status(200).json({
-            message: 'Admin was searched',
-            user: result
-        });
-        
-      })
+
+        bcrypt.compare(user.salasana,result[0].salasana, function(err, res) {
+            if(err) throw err;
+            if(res==true){
+
+                jwt.sign({user}, 'secretkey', { expiresIn: '300000s' }, (err, token) => {
+                    if(err) throw err;
+                    res2.status(200).json({
+
+                        message: 'login was success',
+                        token: token
+                    });
+                });
+            }
+
+      });
     
   });
-
-// GET one tuutori with matching if drom DB
-routes.get('/:id', (req, res, next) => {
-    var id = req.params.id;
-    let sql = 'SELECT tuutorit.tuutorit_id,tuutorit.start_time,persons.firstname,persons.lastname, persons.info FROM TUUTORIT INNER JOIN PERSONS ON TUUTORIT.person_id = PERSONS.person_id WHERE tuutorit_id =' + id;
-    db.query(sql, (err, result) => {
-        if(err) throw err;
-        console.log(result);
-        res.status(200).json({
-            message: 'Tuutori was searched',
-            user: result
-        });
-   });
 });
 
-// POST one tuutori with JSON and ADD to the DB
-routes.post('/:person_id/:start_time', (req, res, next) => {
-    const tuutori = {
-        person_id: req.params.person_id,
-        start_time: req.params.start_time
-        
-    
-        };
-    let sql = 'INSERT INTO TUUTORIT (person_id, start_time) VALUES('+tuutori.person_id+',"'+tuutori.start_time+'");';
-        db.query(sql, (err, result) => {
-         if(err) throw err;
-         console.log(result);
-         res.status(201).json({
-            message: 'Tuutori was created',
-            object: tuutori   
-        });
-    });
-});
 
-// DELETE one tuutori with matching id and clear in DB
-routes.delete('/:id', (req, res, next) => {
-    var id = req.params.id;
-    let sql = 'DELETE from TUUTORIT WHERE tuutorit_id =' + id;
-    db.query(sql, (err, result) => {
-        if(err) throw err;
-        console.log(result);
-        res.status(201).json({
-            message: 'Tuutori was deleted'
-        });
-    });
-});
-
-// PUT new info on tuutori with JSON and change in the DB
-routes.put('/:id/:person_id/:start_time', (req, res, next) => {
-    
-    const tuutori = {
-        id: req.params.id,
-        person_id: req.params.person_id,
-        start_time: req.params.start_time
-        };
-    let sql = 'UPDATE TUUTORIT SET person_id = '+tuutori.person_id+', start_time = "'+tuutori.start_time+'" WHERE tuutorit_id ='+tuutori.id+';';
-        db.query(sql, (err, result) => {
-         if(err) throw err;
-         console.log(result);
-         res.status(201).json({
-            message: 'Tuutori was updated',
-            object: tuutori   
-        });
-    });
-});
 
 
 module.exports = routes;
+

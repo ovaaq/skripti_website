@@ -3,8 +3,12 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mysql = require('mysql'); 
 const app = express();
-    
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
+bcrypt.hash("Parhaat666Burgerit", saltRounds, function(err, hash) {
+    console.log(hash);
+  });
 
 
 app.use(function(req, res, next) {
@@ -36,7 +40,7 @@ app.use('/admin', routesAdmin);
 
 /*
 app.use((req, res, next) => {
-    const error = new Error('Not found');
+    const error = new Error('Not found');s
     error.status(404);
     next(error);
 });
