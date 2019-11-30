@@ -17,8 +17,8 @@ routes.get('/',verify.verifyToken, (req, res, next) => {
                 console.log(result);
                 res.status(200).json({
                     message: 'JASENREKISTERI was fetched',
-                    list: result,
-                    authData
+                    list: result
+                   
                 });
            });        
         }
@@ -39,8 +39,8 @@ routes.get('/',verify.verifyToken, (req, res, next) => {
         console.log(result);
         res.status(200).json({
             message: 'JASENREKISTERI was fetched with maksaneet = false',
-            list: result,
-            authData
+            list: result
+            
         });
    });        
 }
@@ -61,8 +61,8 @@ routes.get('/',verify.verifyToken, (req, res, next) => {
         console.log(result);
         res.status(200).json({
             message: 'JASENREKISTERI was fetched with maksaneet true and hyväksytty is null',
-            list: result,
-            authData
+            list: result
+            
         });
    });        
 }
@@ -83,8 +83,8 @@ routes.get('/',verify.verifyToken, (req, res, next) => {
         console.log(result);
         res.status(200).json({
             message: 'JASENREKISTERI was fetched with hyväksytty ei ole null ja eronnut ei ole null',
-            list: result,
-            authData
+            list: result
+            
         });
    });        
 }
@@ -108,8 +108,8 @@ routes.get('/:id',verify.verifyToken, (req, res, next) => {
         console.log(result);
         res.status(200).json({
             message: 'JASENREKISTERI with id',
-            list: result,
-            authData
+            list: result
+            
         });
    });        
 }
@@ -142,8 +142,8 @@ routes.post('/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:aloit
          console.log(result);
          res.status(200).json({
             message: 'JASENREKISTERI was updated with one jasen',
-            object: jasen,
-            authData
+            object: jasen
+            
         });
    });        
 }
@@ -164,7 +164,7 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
         console.log(result);
         res.status(200).json({
             message: 'JASENREKISTERI was deleted with one jasen',
-            authData
+            
         });
    });        
 }
@@ -199,7 +199,7 @@ routes.put('/:id/:firstName/:lastName/:kotipaikka/:email/:jasentyyppi/:maksu/:al
          res.status(200).json({
             message: 'JASENREKISTERI was updated',
             object: jasen,
-            authData
+            
         });
    });        
 }

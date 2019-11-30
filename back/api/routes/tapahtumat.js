@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
 var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
+const jwt= require("jsonwebtoken");
 
 
 
@@ -72,8 +73,8 @@ router.post('/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta', (r
          console.log(result);
          res.status(200).json({
             message: 'TAPAHTUMA was added',
-            object:tapahtuma,
-            authData
+            object:tapahtuma
+            
         });
    });        
 }
@@ -93,8 +94,8 @@ router.delete('/:id', (req, res, next) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
-            message: 'TAPAHTUMA was deleted',         
-            authData
+            message: 'TAPAHTUMA was deleted'       
+            
         });
    });        
 }
@@ -126,8 +127,8 @@ router.put('/:id/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta',
          console.log(result);
          res.status(200).json({
             message: 'TAPAHTUMA was updated', 
-            object:tapahtuma,        
-            authData
+            object:tapahtuma        
+            
         });
    });        
 }

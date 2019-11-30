@@ -2,6 +2,7 @@ const express = require('express');
 const routes = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
 var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
+const jwt= require("jsonwebtoken");
 
 // GET all fanituotteet from the DB
 routes.get('/', (req, res, next) => {
@@ -50,8 +51,8 @@ routes.post('/:fanituotekategoria_id/:hinta/:kuva/:info/:nimi',verify.verifyToke
          console.log(result);
          res.status(200).json({
             message: 'FANITUOTTEET was added with one fanituote',
-            object: fanituote,
-            authData
+            object: fanituote
+            
         });
    });        
 }
@@ -71,8 +72,8 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
-            message: 'FANITUOTTEET was deleted with one fanituote',
-            authData
+            message: 'FANITUOTTEET was deleted with one fanituote'
+            
         });
    });        
 }
@@ -101,8 +102,8 @@ routes.put('/:id/:fanituotekategoria_id/:hinta/:kuva/:info/:nimi',verify.verifyT
          console.log(result);
          res.status(200).json({
             message: 'FANITUOTTEET was updated with one fanituote',
-            object:fanituote,
-            authData
+            object:fanituote
+            
         });
    });        
 }

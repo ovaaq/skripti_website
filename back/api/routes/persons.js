@@ -2,6 +2,8 @@ const express = require('express');
 const routes = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
 var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
+const jwt= require("jsonwebtoken");
+
 // GET all person from the DB
 routes.get('/', (req, res, next) => {
     let sql = "SELECT * from PERSONS;";
@@ -80,8 +82,8 @@ routes.post('/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:sna
          console.log(result);
          res.status(200).json({
             message: 'PERSON WAS ADDED',
-            object:user,
-            authData
+            object:user
+            
         });
    });        
 }
@@ -101,8 +103,8 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
-            message: 'PERSON was deleted',
-            authData
+            message: 'PERSON was deleted'
+            
         });
    });        
 }
@@ -135,8 +137,8 @@ routes.put('/:id/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:
          console.log(result);
          res.status(200).json({
             message: 'PERSON was updated',
-            object:user,
-            authData
+            object:user
+            
         });
    });        
 }

@@ -2,6 +2,7 @@ const express = require('express');
 const routes = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js')
 var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
+const jwt= require("jsonwebtoken");
 
 
 // GET all tuutorit from the DB
@@ -64,8 +65,8 @@ routes.post('/:person_id/:start_time',verify.verifyToken, (req, res, next) => {
          console.log(result);
          res.status(200).json({
             message: 'TUUTORI was added',
-            object:tuutori,
-            authData
+            object:tuutori
+            
         });
    });        
 }
@@ -85,8 +86,8 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
         if(err) throw err;
         console.log(result);
         res.status(200).json({
-            message: 'TUUTORI was deleted',
-            authData
+            message: 'TUUTORI was deleted'
+            
         });
    });        
 }
@@ -111,8 +112,8 @@ routes.put('/:id/:person_id/:start_time', (req, res, next) => {
          console.log(result);
          res.status(200).json({
             message: 'TUUTORI was updated',
-            object:tuutori,
-            authData
+            object:tuutori
+            
         });
    });        
 }
