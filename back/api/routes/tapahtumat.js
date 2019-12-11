@@ -21,7 +21,7 @@ router.get('/', (req, res, next) => {
 });
 
 
-// one tapahtuma with matching if drom DB
+// future tapahtumat
 router.get('/future', (req, res, next) => {
     var id = req.params.id;
     let sql = 'SELECT * from tapahtumat WHERE start_time > CURRENT_TIMESTAMP ORDER BY start_time;';
@@ -52,20 +52,20 @@ router.get('/:id', (req, res, next) => {
 });
 
 // POST one tapahtuma with JSON and ADD to the DB
-router.post('/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta', (req, res, next) => {
+router.post('/',verify.verifyToken, (req, res, next) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
           res.sendStatus(403);
         } else {
     const tapahtuma = {
-        startTime: req.params.startTime,
-        endTime: req.params.endTime,
-        missa: req.params.missa,
-        mika: req.params.mika,
-        linkki: req.params.linkki,
-        kuva: req.params.kuva,
-        teksti: req.params.teksti,
-        hinta: req.params.hinta
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        missa: req.body.missa,
+        mika: req.body.mika,
+        linkki: req.body.linkki,
+        kuva: req.body.kuva,
+        teksti: req.body.teksti,
+        hinta: req.body.hinta
         };
     let sql = 'INSERT INTO tapahtumat(start_time, end_time, missa, mika, linkki ,kuva, teksti ,hinta) VALUES("'+tapahtuma.startTime+'","'+tapahtuma.endTime+'","'+tapahtuma.missa+'","'+tapahtuma.mika+'","'+tapahtuma.linkki+'","'+tapahtuma.kuva+'","'+tapahtuma.teksti+'","'+tapahtuma.hinta+'");';
         db.query(sql, (err, result) => {
@@ -83,12 +83,12 @@ router.post('/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta', (r
 });
 
 // DELETE one tapahtumat with matching id and clear in DB
-router.delete('/:id', (req, res, next) => {
+router.delete('/',verify.verifyToken, (req, res, next) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
           res.sendStatus(403);
         } else {
-    var id = req.params.id;
+    var id = req.body.id;
     let sql = 'DELETE from tapahtumat WHERE tapahtuma_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
@@ -104,7 +104,7 @@ router.delete('/:id', (req, res, next) => {
 });
 
 // PUT new info on tapahtuma with JSON and change in the DB
-router.put('/:id/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta', (req, res, next) => {
+router.put('/:id/:startTime/:endTime/:missa/:mika/:linkki/:kuva/:teksti/:hinta',verify.verifyToken, (req, res, next) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
           res.sendStatus(403);

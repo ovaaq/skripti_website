@@ -95,16 +95,16 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
 
 });
 // PUT new info on tuutori with JSON and change in the DB
-routes.put('/:id/:person_id/:start_time', (req, res, next) => {
+routes.put('/', verify.verifyToken, (req, res, next) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
           res.sendStatus(403);
         } else {
     
     const tuutori = {
-        id: req.params.id,
-        person_id: req.params.person_id,
-        start_time: req.params.start_time
+        id: req.body.id,
+        person_id: req.body_id,
+        start_time: req.body.start_time
         };
     let sql = 'UPDATE TUUTORIT SET person_id = '+tuutori.person_id+', start_time = "'+tuutori.start_time+'" WHERE tuutorit_id ='+tuutori.id+';';
         db.query(sql, (err, result) => {

@@ -5,10 +5,13 @@ const mysql = require('mysql');
 const app = express();
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+var cors = require('cors');
 
 bcrypt.hash("Parhaat666Burgerit", saltRounds, function(err, hash) {
     console.log(hash);
   });
+
+app.use(cors());
 
 
 app.use(function(req, res, next) {

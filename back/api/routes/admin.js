@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const routes = express.Router();
 const db = require('C:\\simon\\webdevjatko\\skripti_website\\back\\db.js');
 const bcrypt = require('bcrypt');
-
+var verify= require("C:\\simon\\webdevjatko\\skripti_website\\back\\verify.js");
 
 
 
@@ -27,9 +27,13 @@ routes.post("/login", (req, res2, next) => {
                     res2.status(200).json({
 
                         message: 'login was success',
-                        token: token
+                        token: token,
+                        success:true
                     });
                 });
+            }
+            else{
+               
             }
 
       });
@@ -37,6 +41,28 @@ routes.post("/login", (req, res2, next) => {
   });
 });
 
+
+// 
+routes.get('/istokenvalid',verify.verifyToken, (req, res, next) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if(err) {
+          res.sendStatus(403).json({
+            message: 'Not logged in',
+            list: false
+           
+        });
+          
+        } else {
+                res.status(200).json({
+                    message: 'Still logged in..',
+                    list: true
+                   
+                });
+                   
+        }
+      });    
+
+});
 
 
 

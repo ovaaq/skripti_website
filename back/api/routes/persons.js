@@ -26,7 +26,7 @@ routes.get('/current', (req, res, next) => {
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        let sql2 ="SELECT persons.person_id, persons.firstname,persons.linkedIn, persons.facebook, persons.instagram,persons.telegram,persons.snapchat, persons.picture,persons.info FROM PERSONS INNER JOIN IHMISETHALLITUKSISSA ON persons.person_id = ihmisethallituksissa.person_id WHERE hallitus_id ="+JSON.stringify(result[0].hallitus_id)+";"
+        let sql2 ="SELECT persons.person_id, persons.firstname, persons.lastname, persons.linkedIn, persons.facebook, persons.instagram,persons.telegram,persons.snapchat, persons.picture,persons.info FROM PERSONS INNER JOIN IHMISETHALLITUKSISSA ON persons.person_id = ihmisethallituksissa.person_id WHERE hallitus_id ="+JSON.stringify(result[0].hallitus_id)+";"
         db.query(sql2, (err, result2) => {
             if(err) throw err;
             console.log(result2);
@@ -42,9 +42,9 @@ routes.get('/current', (req, res, next) => {
 
 
 
- //GET one person with matching if drom DB
+ /*GET one person with matching if drom DB
 routes.get('/:id', (req, res, next) => {
-    var id = req.params.id;
+    var id = req.body.id;
     let sql = 'SELECT  * from PERSONS WHERE person_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
@@ -56,25 +56,25 @@ routes.get('/:id', (req, res, next) => {
    });
 });
 
-
+*/
 
 
 // POST one person with JSON and ADD to the DB
-routes.post('/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:snapchat/:picture/:info',verify.verifyToken, (req, res, next) => {
+routes.post('/',verify.verifyToken, (req, res, next) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
           res.sendStatus(403);
         } else {
     const user = {
-        firstName: req.params.firstName,
-        lastName: req.params.lastName,
-        linkedIn: req.params.linkedIn,
-        facebook: req.params.facebook,
-        instagram: req.params.instagram,
-        telegram: req.params.telegram,
-        snapchat: req.params.snapchat,
-        picture: req.params.picture,
-        info: req.params.info
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        linkedIn: req.body.linkedIn,
+        facebook: req.body.facebook,
+        instagram: req.body.instagram,
+        telegram: req.body.telegram,
+        snapchat: req.body.snapchat,
+        picture: req.body.picture,
+        info: req.body.info
         };
     let sql = 'INSERT INTO persons(firstname, lastname, linkedIn, facebook, instagram, telegram, snapchat, picture, info) VALUES("'+user.firstName+'","'+user.lastName+'","'+user.linkedIn+'","'+user.facebook+'","'+user.instagram+'","'+user.telegram+'","'+user.snapchat+'","'+user.picture+'","'+user.info+'");';
         db.query(sql, (err, result) => {
@@ -97,7 +97,7 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
         if(err) {
           res.sendStatus(403);
         } else {
-    var id = req.params.id;
+    var id = req.body.id;
     let sql = 'DELETE from persons WHERE person_id =' + id;
     db.query(sql, (err, result) => {
         if(err) throw err;
@@ -112,7 +112,7 @@ routes.delete('/:id',verify.verifyToken, (req, res, next) => {
 
 });
 // PUT new info on person with JSON and change in the DB
-routes.put('/:id/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:snapchat/:picture/:info',verify.verifyToken, (req, res, next) => {
+routes.put('/',verify.verifyToken, (req, res, next) => {
     jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
           res.sendStatus(403);
@@ -120,16 +120,16 @@ routes.put('/:id/:firstName/:lastName/:linkedIn/:facebook/:instagram/:telegram/:
     
    
     const user = {
-        id: req.params.id,
-        firstName: req.params.firstName,
-        lastName: req.params.lastName,
-        linkedIn: req.params.linkedIn,
-        facebook: req.params.facebook,
-        instagram: req.params.instagram,
-        telegram: req.params.telegram,
-        snapchat: req.params.snapchat,
-        picture: req.params.picture,
-        info: req.params.info
+        id: req.body.id,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        linkedIn: req.body.linkedIn,
+        facebook: req.body.facebook,
+        instagram: req.body.instagram,
+        telegram: req.body.telegram,
+        snapchat: req.body.snapchat,
+        picture: req.body.picture,
+        info: req.body.info
         };
     let sql = 'UPDATE persons SET firstname = "'+user.firstName+'", lastname = "'+user.lastName+'", linkedIn = "'+user.linkedIn+'", facebook = "'+user.facebook+'", instagram = "'+user.instagram+'", telegram= "'+user.telegram+'", snapchat = "'+user.snapchat+'", picture = "'+user.picture+'", info = "'+user.info+'" WHERE person_id ='+user.id+';';
         db.query(sql, (err, result) => {
